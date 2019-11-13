@@ -67,7 +67,8 @@ namespace WAV2C
                     FileStream fs = new FileStream(path + @"\" + "WAV.c", FileMode.Create);
                     StreamWriter sw = new StreamWriter(fs, Encoding.Default);
 
-                    string str = "const uint8_t DATA[]={";
+                    //string str = "const uint8_t DATA[]={";
+                    string str = "const uint8_t DATA["+m_list.Count.ToString()+ "]={";
                     sw.WriteLine(str);
 
 
