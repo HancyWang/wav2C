@@ -67,12 +67,41 @@ namespace WAV2C
                     FileStream fs = new FileStream(path + @"\" + "WAV.c", FileMode.Create);
                     StreamWriter sw = new StreamWriter(fs, Encoding.Default);
 
+                    string str = "#define ALARM_XXXX_SIZE     "+"("+ m_list.Count.ToString()+"-78)"+"\r\n";
+                    sw.WriteLine(str);
+                   
                     //string str = "const uint8_t DATA[]={";
-                    string str = "const uint8_t DATA["+m_list.Count.ToString()+ "]={";
+                    str = "const uint8_t XXXX_DATA["+m_list.Count.ToString()+ "-78]={";
                     sw.WriteLine(str);
 
+                    //0-77个字节都不是真正的数据，要去掉
+                   
+                    for (int i = 0; i < 4; i++)
+                    {
+                        string strTemp = "";
+                        for (int j = 0; j < 16; j++)
+                        {
+                            strTemp += "0x" + ConBverInt2Hex(m_list[i * 16 + j]) + ",";
+                        }
+                        sw.WriteLine("//  "+strTemp);
+                    }
 
-                    for (int i = 0; i < m_fileSize / 16; i++)
+                    int cur_index = 4; //第四行要去掉前面14个数据
+                    string str_1 = "";
+                    for (int j = 0; j < 14; j++)
+                    {
+                        str_1 += "0x" + ConBverInt2Hex(m_list[cur_index * 16 + j]) + ",";
+                    }
+                    sw.WriteLine("//  " + str_1);
+
+                    //保留第四行的14,15字节数据
+                    str_1 = "";
+                    str_1 += ConBverInt2Hex(m_list[cur_index * 16 + 14]) + "," + ConBverInt2Hex(m_list[cur_index * 16 + 15]) + ",";
+                    sw.WriteLine(str_1);
+
+
+
+                    for (int i = 6; i < m_fileSize / 16; i++)
                     {
                         string strTemp = "";
                         for (int j = 0; j < 16; j++)
